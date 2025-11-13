@@ -1,0 +1,18 @@
+{{- if .Values.broker.args.socketService }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "broker.fullname" . }}-health-socket
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "broker.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: health-socket
+      port: {{ .Values.broker.args.ssPort }}
+      targetPort: {{ .Values.broker.args.ssPort }}
+      protocol: TCP
+  selector:
+    {{- include "broker.selectorLabels" . | nindent 4 }}
+{{- end }}

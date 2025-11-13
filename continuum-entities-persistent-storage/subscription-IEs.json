@@ -1,0 +1,33 @@
+{
+  "id": "urn:aeros:subscription:ie:persistence",
+  "description": "Subscription to Infrastructure Element entity type for conitnuum data persistence",
+  "type": "Subscription",
+  "entities": [
+    {
+      "type": "InfrastructureElement"
+    }
+  ],
+  "watchedAttributes": [
+    "availableRam",
+    "avgPowerConsumption"
+  ],
+  "notification": {
+    "attributes": [
+      "availableRam",
+      "avgPowerConsumption",
+      "infrastructureElementStatus",
+      "currentCpuUsage"
+    ],
+    "endpoint": {
+      "uri": "http://192.168.1.202:1026/ngsi-ld/ex/v1/notify",
+      "accept": "application/json",
+      "receiverInfo": [
+        {
+          "key": "Authorization",
+          "value": "Bearer <token>"
+        }
+      ]
+    }
+  },
+  "throttling": 10
+}

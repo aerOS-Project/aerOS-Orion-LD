@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mongodb.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "mongodb.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mongodb.service.type }}
+  ports:
+    - name: mongodb
+      port: {{ .Values.mongodb.service.ports.mongodb.port }}
+      targetPort: {{ .Values.mongodb.service.ports.mongodb.targetPort }}
+      protocol: {{ .Values.mongodb.service.ports.mongodb.protocol }}
+      {{- if and (or (eq .Values.mongodb.service.type "NodePort") (eq .Values.mongodb.service.type "LoadBalancer")) (not (empty .Values.mongodb.service.ports.mongodb.nodePort)) }}
+      nodePort: {{ .Values.mongodb.service.ports.mongodb.nodePort }}
+      {{- end }}
+  selector:
+    {{- include "mongodb.selectorLabels" . | nindent 4 }}

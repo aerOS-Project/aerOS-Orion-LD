@@ -1,0 +1,18 @@
+apiVersion: v2
+name: orion-ld
+description: A Helm chart for FIWARE Orion-LD context broker. The default values have been adapted to the needs of the aerOS project.
+
+keywords:
+- fiware
+- orion-ld
+- orion
+- aerOS
+- context-broker
+- ngsi-ld
+sources:
+- https://github.com/FIWARE/context.Orion-LD
+
+type: application
+version: 1.4.2
+appVersion: "1.4.2"
+kubeVersion: '>= 1.23-0'

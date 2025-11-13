@@ -1,0 +1,256 @@
+{
+	"info": {
+		"_postman_id": "d40cf05b-4e7a-459e-b8c1-7dade3e32069",
+		"name": "aerOS persistent storage of entities",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4357296"
+	},
+	"item": [
+		{
+			"name": "Create CSR pointing to a Domain's Orion-LD",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \r\n    \"type\": \"ContextSourceRegistration\",\r\n    \"id\": \"urn:aeros:federation:Domain01:Persistence\",\r\n    \"information\": [\r\n        {\r\n            \"entities\": [\r\n                {\r\n                    \"type\": \"InfrastructureElement\"\r\n                },\r\n                {\r\n                    \"type\": \"Domain\"\r\n                },\r\n                {\r\n                    \"type\": \"ServiceComponent\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"contextSourceInfo\": [\r\n        {\r\n            \"key\": \"Authorization\",\r\n            \"value\": \"urn:ngsi-ld:request\"\r\n        }\r\n    ],\r\n    \"mode\": \"inclusive\",\r\n    \"operations\": [\r\n        \"retrieveOps\"\r\n    ],\r\n    \"hostAlias\": \"Domain01\",\r\n    \"endpoint\": \"http://192.168.1.202:1026\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.135:31027/ngsi-ld/v1/csourceRegistrations",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"135"
+					],
+					"port": "31027",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations"
+					],
+					"query": [
+						{
+							"key": "local",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "count",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "options",
+							"value": "sysAttrs",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a subscription to receive updates from the InfrastructureElement entities",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "<token>",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"urn:aeros:subscription:ie:persistence\",\r\n    \"description\": \"Subscription to Infrastructure Element entity type for conitnuum data persistence\",\r\n    \"type\": \"Subscription\",\r\n    \"entities\": [\r\n        {\r\n            \"type\": \"InfrastructureElement\"\r\n        }\r\n    ],\r\n    \"watchedAttributes\": [\r\n        \"availableRam\",\r\n        \"avgPowerConsumption\"\r\n    ],\r\n    \"notification\": {\r\n        \"attributes\": [\r\n            \"availableRam\",\r\n            \"avgPowerConsumption\",\r\n            \"infrastructureElementStatus\",\r\n            \"currentCpuUsage\"\r\n        ],\r\n        \"endpoint\": {\r\n            \"uri\": \"http://192.168.1.202:1026/ngsi-ld/ex/v1/notify\",\r\n            \"accept\": \"application/json\",\r\n            \"receiverInfo\": [\r\n                {\r\n                    \"key\": \"Authorization\",\r\n                    \"value\": \"Bearer <token>\"\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    \"throttling\": 10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.135:31027/ngsi-ld/v1/subscriptions/",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"135"
+					],
+					"port": "31027",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"subscriptions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a subscription to receive updates from the Domain entities",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "<token>",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"urn:aeros:subscription:domain:persistence\",\r\n    \"description\": \"Subscription to Domain entity type for conitnuum data persistence\",\r\n    \"type\": \"Subscription\",\r\n    \"entities\": [\r\n        {\r\n            \"type\": \"Domain\"\r\n        }\r\n    ],\r\n    \"watchedAttributes\": [\r\n        \"isEntrypoint\",\r\n        \"domainStatus\",\r\n        \"publicUrl\"\r\n    ],\r\n    \"notification\": {\r\n        \"attributes\": [\r\n            \"isEntrypoint\",\r\n            \"domainStatus\",\r\n            \"publicUrl\"\r\n        ],\r\n        \"endpoint\": {\r\n            \"uri\": \"http://192.168.1.202:1026/ngsi-ld/ex/v1/notify\",\r\n            \"accept\": \"application/json\"\r\n        }\r\n    },\r\n    \"throttling\": 60\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.135:31027/ngsi-ld/v1/subscriptions/",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"135"
+					],
+					"port": "31027",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"subscriptions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a persistence subscription",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "<token>",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.1.202:1026/ngsi-ld/v1/subscriptions/urn:aeros:subscription:ie:persistence",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"202"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"subscriptions",
+						"urn:aeros:subscription:ie:persistence"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get historical IE values after a certain date",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.1.202:8080/temporal/entities?type=InfrastructureElement&lastN=1&timerel=after&timeAt=2024-08-29T09:15:06&timeproperty=modifiedAt&options=sysAttrs",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"202"
+					],
+					"port": "8080",
+					"path": [
+						"temporal",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "InfrastructureElement"
+						},
+						{
+							"key": "lastN",
+							"value": "1"
+						},
+						{
+							"key": "timerel",
+							"value": "after"
+						},
+						{
+							"key": "timeAt",
+							"value": "2024-08-29T09:15:06"
+						},
+						{
+							"key": "timeproperty",
+							"value": "modifiedAt"
+						},
+						{
+							"key": "options",
+							"value": "sysAttrs"
+						},
+						{
+							"key": "endTimeAt",
+							"value": "2024-07-17",
+							"description": "only if timeAt=before",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

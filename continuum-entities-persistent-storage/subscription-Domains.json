@@ -1,0 +1,27 @@
+{
+  "id": "urn:aeros:subscription:domain:persistence",
+  "description": "Subscription to Domain entity type for conitnuum data persistence",
+  "type": "Subscription",
+  "entities": [
+    {
+      "type": "Domain"
+    }
+  ],
+  "watchedAttributes": [
+    "isEntrypoint",
+    "domainStatus",
+    "publicUrl"
+  ],
+  "notification": {
+    "attributes": [
+      "isEntrypoint",
+      "domainStatus",
+      "publicUrl"
+    ],
+    "endpoint": {
+      "uri": "http://192.168.1.202:1026/ngsi-ld/ex/v1/notify",
+      "accept": "application/json"
+    }
+  },
+  "throttling": 60
+}

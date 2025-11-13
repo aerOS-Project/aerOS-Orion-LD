@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mintaka.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "mintaka.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.mintaka.autoscaling.enabled }}
+  replicas: {{ .Values.mintaka.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mintaka.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mintaka.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.mintaka.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.chartNodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if not .Values.chartNodeSelector }}
+        {{- with .Values.mintaka.nodeSelector }}
+      nodeSelector:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.mintaka.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mintaka.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.mintaka.podSecurityContext | nindent 8 }}
+      containers:
+        - name: mintaka
+          securityContext:
+            {{- toYaml .Values.mintaka.securityContext | nindent 12 }}
+          image: "{{ .Values.mintaka.image.repository }}:{{ .Values.mintaka.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.mintaka.image.pullPolicy }}
+          ports:
+            - name: api
+              containerPort: {{ .Values.mintaka.service.ports.api.containerPort }}
+              protocol: {{ .Values.mintaka.service.ports.api.protocol }}
+          resources:
+            {{- toYaml .Values.mintaka.resources | nindent 12 }}
+          env:
+            - name: DATASOURCES_DEFAULT_DATABASE
+              value: {{ .Values.mintaka.envVars.database | quote }}
+            {{- with .Values.timescaledb.envVars }}
+            - name: DATASOURCES_DEFAULT_USERNAME
+              value: {{ .user | quote }}
+            - name: DATASOURCES_DEFAULT_PASSWORD
+              value: {{ .password | quote }}
+            {{- end }}
+            - name: DATASOURCES_DEFAULT_HOST
+              value: {{ include "timescaledb.fullname" . | quote }}

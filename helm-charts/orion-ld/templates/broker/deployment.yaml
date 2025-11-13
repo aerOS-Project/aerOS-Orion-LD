@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "broker.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "broker.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.broker.autoscaling.enabled }}
+  replicas: {{ .Values.broker.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "broker.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "broker.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.broker.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.chartNodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if not .Values.chartNodeSelector }}
+        {{- with .Values.broker.nodeSelector }}
+      nodeSelector:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.broker.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.broker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.broker.podSecurityContext | nindent 8 }}
+      containers:
+        - name: broker
+          securityContext:
+            {{- toYaml .Values.broker.securityContext | nindent 12 }}
+          image: "{{ .Values.broker.image.repository }}:{{ .Values.broker.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.broker.image.pullPolicy }}
+          args: 
+            - -dbhost
+            - {{ include "mongodb.fullname" . | quote }}
+            - -brokerId
+            - {{ .Values.broker.args.brokerId }}
+            - -t
+            - {{ .Values.broker.args.traceLevel }}
+            - -logLevel
+            - {{ quote .Values.broker.args.logLevel }}
+            {{- if .Values.broker.args.disableLogFile }}
+            - -disableFileLog
+            {{- end }}
+            {{- if .Values.broker.args.wip }}
+            - -wip
+            - {{ .Values.broker.args.wip }}
+            {{- end }}
+            {{- if .Values.broker.args.forwarding }}
+            - -forwarding
+            {{- end }}
+            {{- if and .Values.broker.args.experimental (not .Values.broker.args.mongoc) }}
+            - -experimental
+            {{- end }}
+            {{- if .Values.broker.args.noArrayReduction }}
+            - -noArrayReduction
+            {{- end }}
+            {{- if .Values.broker.args.mongoc }}
+            - -mongocOnly
+            {{- end }}
+            {{- if .Values.broker.args.multiservice }}
+            - -multiservice
+            {{- end }}
+            {{- if .Values.broker.args.pageSize }}
+            - -pageSize
+            - {{ .Values.broker.args.pageSize | quote }}
+            {{- end }}
+            {{- if .Values.broker.args.socketService }}
+            - -socketService
+            - -ssPort
+            - {{ .Values.broker.args.ssPort | quote }}
+            {{- end }}
+            {{- if and .Values.broker.args.subordinateEndpoint (contains "distSubs" .Values.broker.args.wip) }}
+            - -subordinateEndpoint
+            - {{ .Values.broker.args.subordinateEndpoint }}
+            {{- end }}
+            {{- if .Values.broker.args.troe.enabled }}
+            - -troe
+            - -troeHost
+            - {{ .Values.broker.args.troe.host }}
+            - -troePort
+            - {{ .Values.broker.args.troe.port | quote }}
+            - -troeUser
+            - {{ .Values.broker.args.troe.user }}
+            - -troePwd
+            - {{ .Values.broker.args.troe.password }}
+            {{- end }}
+          ports:
+            - name: api
+              containerPort: {{ .Values.broker.service.ports.api.containerPort }}
+              protocol: {{ .Values.broker.service.ports.api.protocol }}
+          {{- if .Values.broker.args.socketService }}
+            - name: health-socket
+              containerPort: {{ .Values.broker.args.ssPort }}
+              protocol: TCP
+          {{- if and .Values.broker.args.troe.enabled (not .Values.broker.args.troe.allEntityTypes) }}
+          volumeMounts:
+          - name: orion-ld-config-volume
+            mountPath: /opt/orion/orion-ld-config.json
+            subPath: orion-ld-config.json
+            readOnly: true
+          {{- end }}
+          # readinessProbe: 
+          #   tcpSocket:
+          #     port: {{ .Values.broker.args.ssPort }}
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+          #   timeoutSeconds: 30
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          # livenessProbe: 
+          #   tcpSocket:
+          #     port: {{ .Values.broker.args.ssPort }}
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 10
+          #   timeoutSeconds: 30
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          {{- end }}
+          resources:
+            {{- toYaml .Values.broker.resources | nindent 12 }}
+      {{- if and .Values.broker.args.troe.enabled (not .Values.broker.args.troe.allEntityTypes) }}
+      volumes:
+        - name: orion-ld-config-volume
+          configMap:
+            name: {{ printf "%s-config" (include "broker.fullname" .) }}
+      {{- end }}

@@ -1,0 +1,92 @@
+services:
+  mongo:
+    image: mongo:7.0.12
+    # volumes:
+    #     - mongo-orion-mintaka:/data/db
+    restart: always
+    expose:
+      - "27017"
+    networks:
+      - mintaka
+
+  orion:
+    # image: fiware/orion-ld:1.10.0
+    image: registry.gitlab.aeros-project.eu/aeros-public/common-deployments/orion-ld:1.4.2
+    # healthcheck:
+    #   test: ["CMD-SHELL", "printf \"GET / HTTP/1.1\n\n\" > /dev/tcp/127.0.0.1/1027"]
+    #   interval: 30s
+    #   timeout: 15s
+    #   retries: 5
+    #   start_period: 30s
+    depends_on:
+      mongo:
+        condition: service_started
+        restart: true
+      timescale:
+        condition: service_healthy
+        restart: true
+    links:
+      - mongo
+      - timescale
+    ports:
+      - "1026:1026"
+    command:  -dbhost mongo -brokerId Persistence -forwarding -experimental -wip entityMaps,distSubs -t 0-255 -logLevel DEBUG -disableFileLog -noArrayReduction -socketService -mongocOnly -troe -troeHost timescale -troePort 5432 -troeUser orion -troePwd orion -subordinateEndpoint http://192.168.1.202/ngsi-ld/ex/v1
+    # restart: always
+    networks:
+      - mintaka
+
+  mintaka:
+    image: fiware/mintaka
+    hostname: mintaka
+    # healthcheck:
+    #   test: [ "CMD-SHELL", "pg_isready -U orion" ]
+    #   interval: 15s
+    #   timeout: 15s
+    #   retries: 15
+    #   start_period: 60s
+    links:
+      - timescale
+    depends_on:
+      timescale:
+        condition: service_healthy
+        restart: true
+      orion:
+        condition: service_started
+        restart: true
+    environment:
+      - DATASOURCES_DEFAULT_DATABASE=orion
+      - DATASOURCES_DEFAULT_PASSWORD=orion
+      - DATASOURCES_DEFAULT_USERNAME=orion
+      - DATASOURCES_DEFAULT_HOST=timescale
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    networks:
+      - mintaka
+
+  timescale:
+    image: timescale/timescaledb-postgis:latest-pg12
+    hostname: timescale
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U orion" ]
+      interval: 15s
+      timeout: 15s
+      retries: 15
+      start_period: 10s
+    environment:
+      - POSTGRES_USER=orion
+      - POSTGRES_PASSWORD=orion
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      - mintaka
+
+# volumes:
+#   mongo-orion-mintaka:
+
+networks:
+  mintaka:

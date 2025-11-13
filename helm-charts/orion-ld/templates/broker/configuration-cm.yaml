@@ -1,0 +1,24 @@
+{{- if and .Values.broker.args.troe.enabled (not .Values.broker.args.troe.allEntityTypes) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-config" (include "broker.fullname" .) }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "broker.labels" . | nindent 4 }}
+data:
+  orion-ld-config.json: |-
+    {
+      "troe": {
+        "filter": [
+          {
+            "type": [
+              {{- range $index, $e := .Values.broker.args.troe.entityTypes }}
+              {{- if gt $index 0 }}, {{ end }}"{{ $e }}"
+              {{- end -}}
+            ]
+          }  
+        ]
+      }
+    }
+{{- end }}

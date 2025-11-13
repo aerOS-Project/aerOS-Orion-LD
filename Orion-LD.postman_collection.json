@@ -1,0 +1,882 @@
+{
+	"info": {
+		"_postman_id": "3f0e7ad6-eab0-4352-830b-e1033a7ad820",
+		"name": "Orion-LD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4357296"
+	},
+	"item": [
+		{
+			"name": "GET entities",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/ld+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"description": "Use a specific NGSI-LD tenant",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"description": "Needed for distributed requests in aerOS",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:1026/ngsi-ld/v1/entities?count=true&type=InfrastructureElement",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "InfrastructureElement",
+							"description": "Domain, InfrastructureElement, LowLevelOrchestrator, Service, ServiceComponent"
+						},
+						{
+							"key": "attrs",
+							"value": "domain",
+							"description": "List of requested attributes separated by commas, e.g. \"domain,currentCpuUsage,availableRam\"",
+							"disabled": true
+						},
+						{
+							"key": "local",
+							"value": "true",
+							"description": "Only displays local entities of the broker, not federated",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "3",
+							"description": "For pagination",
+							"disabled": true
+						},
+						{
+							"key": "offset",
+							"value": "1",
+							"description": "For pagination",
+							"disabled": true
+						},
+						{
+							"key": "count",
+							"value": "true",
+							"description": "Receives the \"NGSILD-Results-Count\" header in the response with the total number of available entities"
+						},
+						{
+							"key": "q",
+							"value": "domain==\"urn:ngsi-ld:Domain:3\"",
+							"description": "Specific domain query",
+							"disabled": true
+						},
+						{
+							"key": "q",
+							"value": "domain==\"urn:ngsi-ld:Domain:3\"|domain==\"urn:ngsi-ld:Domain:1\"",
+							"description": "IEs in Domain 1 OR 3",
+							"disabled": true
+						},
+						{
+							"key": "q",
+							"value": "cpuCores>2&ramCapacity>4000",
+							"description": "IEs with more than 2 CPU cores AND 4000MB of RAM",
+							"disabled": true
+						},
+						{
+							"key": "format",
+							"value": "simplified",
+							"description": "simplified, concise, normalized (default)",
+							"disabled": true
+						},
+						{
+							"key": "options",
+							"value": "sysAttrs",
+							"description": "Returns \"createdAt\" and \"modifiedAt\" metadata. It doesn't work if format=simplified",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET entity by ID",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/ld+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:1026/ngsi-ld/v1/entities/urn:ngsi-ld:InfrastructureElement:raspberrypi",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:InfrastructureElement:raspberrypi"
+					],
+					"query": [
+						{
+							"key": "attrs",
+							"value": "domain",
+							"description": "List of requested attributes separated by commas, e.g. \"domain,currentCpuUsage,availableRam\"",
+							"disabled": true
+						},
+						{
+							"key": "local",
+							"value": "true",
+							"description": "Only displays local entities of the broker, not federated ones",
+							"disabled": true
+						},
+						{
+							"key": "format",
+							"value": "simplified",
+							"description": "simplified, concise, normalized (default)",
+							"disabled": true
+						},
+						{
+							"key": "options",
+							"value": "sysAttrs",
+							"description": "Returns \"createdAt\" and \"modifiedAt\" metadata. It doesn't work if format=simplified",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Context Source Registration",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"urn:R1\",\r\n  \"type\": \"ContextSourceRegistration\",\r\n  \"information\": [\r\n    {\r\n      \"entities\": [\r\n        {\r\n          \"type\": \"T\"\r\n        },\r\n        {\r\n          \"type\": \"U\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"mode\": \"inclusive\",\r\n  \"operations\": [ \"retrieveOps\"],\r\n  \"endpoint\": \"http://192.168.1.124:1026\",\r\n  \"hostAlias\": \"orionA\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/csourceRegistrations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an entity",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"urn:ngsi-ld:InfrastructureElement:001\",\r\n  \"type\": \"InfrastructureElement\",\r\n  \"domain\": {\r\n    \"type\": \"Relationship\",\r\n    \"object\": \"urn:ngsi-ld:Domain:01\"\r\n  },\r\n  \"internalIpAddress\": {\r\n    \"type\": \"Property\",\r\n    \"value\": \"192.168.1.35\"\r\n  },\r\n  \"macAddress\": {\r\n    \"type\": \"Property\",\r\n    \"value\": \"00:15:5d:c0:94:74\"\r\n  },\r\n  \"lowLevelOrchestrator\": {\r\n    \"type\": \"Relationship\",\r\n    \"object\": \"urn:ngsi-ld:LowLevelOrchestrator:01\"\r\n  },\r\n  \"cpuCores\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 4\r\n  },\r\n  \"currentCpuUsage\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 20\r\n  },\r\n  \"ramCapacity\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 8192\r\n  },\r\n  \"availableRam\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 5100\r\n  },\r\n  \"currentRamUsage\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 3092\r\n  },\r\n  \"avgPowerConsumption\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 100\r\n  },\r\n  \"currentPowerConsumption\": {\r\n    \"type\": \"Property\",\r\n    \"value\": 95\r\n  },\r\n  \"realTimeCapable\": {\r\n    \"type\": \"Property\",\r\n    \"value\": true\r\n  },\r\n  \"cpuArchitecture\": {\r\n    \"type\": \"Relationship\",\r\n    \"object\": \"urn:ngsi-ld:CpuArchitecture:x64\"\r\n  },\r\n  \"operatingSystem\": {\r\n    \"type\": \"Property\",\r\n    \"value\": \"urn:ngsi-ld:OperatingSystem:Linux\"\r\n  },\r\n  \"infrastructureElementTier\": {\r\n    \"type\": \"Relationship\",\r\n    \"value\": \"urn:ngsi-ld:InfrastructureElementTier:Edge\"\r\n  },\r\n  \"infrastructureElementStatus\": {\r\n    \"type\": \"Relationship\",\r\n    \"value\": \"urn:ngsi-ld:InfrastructureElementStatus:Ready\"\r\n  },\r\n  \"location\": {\r\n    \"type\": \"GeoProperty\",\r\n    \"value\": {\r\n      \"type\": \"Point\",\r\n      \"coordinates\": [-0.3411743020092746, 39.48103451588121]\r\n    }\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/entities",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Context Source Registrations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/csourceRegistrations",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations"
+					],
+					"query": [
+						{
+							"key": "type",
+							"value": "IE",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an entity",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ramCapacity\": {\r\n        \"value\": -1\r\n    },\r\n    \"cpuCores\": {\r\n        \"value\": -1\r\n    },\r\n    \"availableRam\": {\r\n        \"value\": -1\r\n    },\r\n    \"currentCpuUsage\": {\r\n        \"value\": -1\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1:1026/ngsi-ld/v1/entities/urn:nsi-ld:IE:continuum-dock/attrs",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:nsi-ld:IE:continuum-dock",
+						"attrs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get subscriptions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/subscriptions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"subscriptions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a subscription",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"urn:ngsi-ld:subscriptions:S12\",\r\n    \"type\": \"Subscription\",\r\n    \"entities\": [\r\n        {\r\n            \"id\": \"urn:ngsi-ld:IE:0002\",\r\n            \"type\": \"IE\"\r\n        }\r\n    ],\r\n    \"notification\": {\r\n        \"endpoint\": {\r\n            \"uri\": \"http://127.0.0.1:1880/susc\",\r\n            \"accept\": \"application/json\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/subscriptions",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"subscriptions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete entity",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/entities/urn:ngsi-ld:InfrastructureElement:raspberrypi05",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"202"
+					],
+					"port": "1027",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:InfrastructureElement:raspberrypi05"
+					],
+					"query": [
+						{
+							"key": "local",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a registration",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:1026/ngsi-ld/v1/csourceRegistrations/urn:R1",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations",
+						"urn:R1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all entity types",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/ld+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:1026/ngsi-ld/v1/types?details=true",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"types"
+					],
+					"query": [
+						{
+							"key": "details",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create entity duplicate using a subscription",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"urn:ngsi-ld:subscriptions:S12\",\r\n    \"type\": \"Subscription\",\r\n    \"entities\": [\r\n        {\r\n            \"type\": \"InfrastructureElement\"\r\n        }\r\n    ],\r\n    \"notification\": {\r\n        \"endpoint\": {\r\n            \"uri\": \"http://127.0.0.1:1027/ngsi-ld/ex/v1/notify\",\r\n            \"accept\": \"application/json\"\r\n        }\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/subscriptions/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"subscriptions",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an entity attribute",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"Property\",\r\n    \"value\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/entities/urn:ngsi-ld:IE:001/attrs/realTimeCapable",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:IE:001",
+						"attrs",
+						"realTimeCapable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Context Source Registration to duplicate entity",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"urn:R1\",\r\n    \"type\": \"ContextSourceRegistration\",\r\n    \"information\": [\r\n        {\r\n            \"entities\": [\r\n                {\r\n                    \"type\": \"InfrastructureElement\"\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"endpoint\": \"127.0.0.1:1027\",\r\n    \"hostAlias\": \"OrionB\",\r\n    \"mode\": \"inclusive\",\r\n    \"operations\": [\r\n        \"updateOps\",\r\n        \"redirectionOps\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/csourceRegistrations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get entity map",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "127.0.0.1:1026/ngsi-ld/v1/entityMaps/urn:ngsi-ld:entity-map:363a19e4-d6d9-11ee-a75d-0242c0a82003",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entityMaps",
+						"urn:ngsi-ld:entity-map:363a19e4-d6d9-11ee-a75d-0242c0a82003"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "0",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create entity map for an entity type",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/ld+json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/entities?type=InfrastructureElement",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities"
+					],
+					"query": [
+						{
+							"key": "count",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "type",
+							"value": "InfrastructureElement"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an entity attribute (PUT)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"type\": \"Relationship\",\r\n    \"object\": \"urn:ngsi-ld:DomainStatus:Functional\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/entities/urn:ngsi-ld:Domain:01/attrs/domainStatus",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"entities",
+						"urn:ngsi-ld:Domain:01",
+						"attrs",
+						"domainStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Context Source Registration for the aerOS continuum (broker behind KrakenD)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"urn:R1\",\r\n  \"type\": \"ContextSourceRegistration\",\r\n  \"information\": [\r\n    {\r\n      \"entities\": [\r\n        {\r\n          \"type\": \"InfrastructureElement\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"contextSourceInfo\": [\r\n    {\r\n      \"key\": \"Authorization\",\r\n      \"value\": \"urn:ngsi-ld:request\"\r\n    }\r\n  ],\r\n  \"mode\": \"inclusive\",\r\n  \"operations\": [ \"retrieveOps\"],\r\n  \"endpoint\": \"https://cf-mvp-domain.aeros-project.eu/orionld\",\r\n  \"hostAlias\": \"Domain01\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "127.0.0.1/ngsi-ld/v1/csourceRegistrations/",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Context Source Registration for the infrastructure entities of the aerOS continuum",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"urn:R1\",\r\n  \"type\": \"ContextSourceRegistration\",\r\n  \"information\": [\r\n    {\r\n      \"entities\": [\r\n        {\r\n          \"type\": \"Domain\"\r\n        },\r\n        {\r\n          \"type\": \"LowLevelOrchestrator\"\r\n        },\r\n        {\r\n          \"type\": \"InfrastructureElement\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"contextSourceInfo\": [\r\n    {\r\n      \"key\": \"Authorization\",\r\n      \"value\": \"urn:ngsi-ld:request\"\r\n    }\r\n  ],\r\n  \"mode\": \"inclusive\",\r\n  \"operations\": [ \"retrieveOps\"],\r\n  \"endpoint\": \"192.168.1.124:1026\",\r\n  \"hostAlias\": \"Domain01\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/csourceRegistrations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a Context Source Registration for the service orchestration entities of the aerOS continuum",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "NGSILD-Tenant",
+						"value": "aeros",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "aerOS",
+						"value": "true",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"urn:R3\",\r\n  \"type\": \"ContextSourceRegistration\",\r\n  \"information\": [\r\n    {\r\n      \"entities\": [\r\n        {\r\n          \"type\": \"Service\"\r\n        },\r\n        {\r\n          \"type\": \"ServiceComponent\"\r\n        },\r\n        {\r\n          \"type\": \"NetworkPort\"\r\n        },\r\n        {\r\n          \"type\": \"InfrastructureElementRequirements\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"contextSourceInfo\": [\r\n    {\r\n      \"key\": \"Authorization\",\r\n      \"value\": \"urn:ngsi-ld:request\"\r\n    }\r\n  ],\r\n  \"mode\": \"inclusive\",\r\n  \"operations\": [ \"retrieveOps\"],\r\n  \"endpoint\": \"192.168.1.124\",\r\n  \"hostAlias\": \"Domain02\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:1026/ngsi-ld/v1/csourceRegistrations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "1026",
+					"path": [
+						"ngsi-ld",
+						"v1",
+						"csourceRegistrations",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

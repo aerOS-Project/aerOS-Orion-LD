@@ -1,0 +1,18 @@
+# Note that mongo container is started before Orion, as Orion needs it
+# as dependency and reserve the order has been found problematic in some
+# low resource hosts
+version: "3.8"
+services:
+  mongo:
+    image: mongo:7.0.12
+    volumes:
+        - mongo-orion-domain:/data/db
+  orion:
+    image: fiware/orion-ld:1.10.0
+    links:
+      - mongo
+    ports:
+      - "1026:1026"
+    command: -dbhost mongo -mongocOnly -brokerId <DomainID> -forwarding -wip entityMaps,distSubs -t 70-99 -logLevel DEBUG -disableFileLog -noArrayReduction -subordinateEndpoint http://<machine-ip>:1026/ngsi-ld/ex/v1 -socketService
+volumes:
+  mongo-orion-domain:
